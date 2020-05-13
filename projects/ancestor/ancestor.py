@@ -36,12 +36,19 @@ def earliest_ancestor(ancestors, starting_node):
             added_nodes.append(count)
     
     # sorting stuff and grabbing our lowest id value with highest distance
-    print(dist_list)
     dist_list.sort(key=lambda e: e[0], reverse=True)
+    print(dist_list)
     dist_list = [tup[1] for tup in dist_list if tup[0] == dist_list[0][0]]
     
     return min(dist_list)
 
+# def earliest_ancestor(ancestors, starting_node, has_parent=False):
+#     for parent, child in ancestors:
+#         if child == starting_node:
+#             # find the parent of the parent
+#             return earliest_ancestor(ancestors, parent, True)
+
+#     return starting_node if has_parent == True else -1
 
 # Traverse up through parents
 # Create list of tuples- distance traveled (loops), and parent ID

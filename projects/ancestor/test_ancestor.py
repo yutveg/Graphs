@@ -1,4 +1,5 @@
 import unittest
+import time
 from ancestor import earliest_ancestor
 
 class Test(unittest.TestCase):
@@ -12,6 +13,7 @@ class Test(unittest.TestCase):
        \ / \   \
         6   7   9
     '''
+    t0 = time.clock()
     def test_earliest_ancestor(self):
         test_ancestors = [(1, 3), (2, 3), (3, 6), (5, 6), (5, 7), (4, 5), (4, 8), (8, 9), (11, 8), (10, 1)]
         self.assertEqual(earliest_ancestor(test_ancestors, 1), 10)
@@ -25,6 +27,8 @@ class Test(unittest.TestCase):
         self.assertEqual(earliest_ancestor(test_ancestors, 9), 4)
         self.assertEqual(earliest_ancestor(test_ancestors, 10), -1)
         self.assertEqual(earliest_ancestor(test_ancestors, 11), -1)
+    t1 = time.clock()
 
+    print(f"test took: {t1 - t0} seconds")
 if __name__ == '__main__':
     unittest.main()

@@ -58,6 +58,7 @@ class SocialGraph:
         if not self.friendships[ext_user_id]:
             return
         for user_id in self.friendships[ext_user_id]:
+            # checking if exists, if it DOES check if new entry would be shorter
             if user_id not in visited or len(visited[user_id]) > len(path) + 1:    
                 local_path = path.copy()
                 local_path.append(user_id)
@@ -82,13 +83,12 @@ class SocialGraph:
             visited[friend_id] = [user_id, friend_id]
             # For extended_user of friend:
             for extended_user in self.friendships[friend_id]:
+                # checking if exists, if it DOES check if new entry would be shorter
                 if extended_user not in visited or len(visited[extended_user]) > 3:
                     path = [user_id, friend_id, extended_user]
                     visited[extended_user] = path
                     self.recurse_extended(extended_user, visited, path)
 
-                # Store extended user + path along the way (path = user_id + path)
-                # If we come across a friend already visited in extended network, return
 
         return visited
 

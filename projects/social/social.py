@@ -1,3 +1,5 @@
+import random
+
 class User:
     def __init__(self, name):
         self.name = name
@@ -29,24 +31,40 @@ class SocialGraph:
         self.friendships[self.last_id] = set()
 
     def populate_graph(self, num_users, avg_friendships):
-        """
-        Takes a number of users and an average number of friendships
-        as arguments
+     # Reset graph
+     self.last_id = 0
+     self.users = {}
+     self.friendships = {}
+     # Add users
+     for i in range(0, num_users):
+         self.add_user(f"User {i}")
+     # Create Frienships
+     # Generate all possible friendship combinations
+     possible_friendships = []
+     # Avoid duplicates by ensuring the first number is smaller than the second
+     for user_id in self.users:
+         for friend_id in range(user_id + 1, self.last_id + 1):
+             possible_friendships.append((user_id, friend_id))
+     # Shuffle the possible friendships
+     random.shuffle(possible_friendships)
+     # Create friendships for the first X pairs of the list
+     # X is determined by the formula: num_users * avg_friendships // 2
+     # Need to divide by 2 since each add_friendship() creates 2 friendships
+     for i in range(num_users * avg_friendships // 2):
+         friendship = possible_friendships[i]
+         self.add_friendship(friendship[0], friendship[1])
 
-        Creates that number of users and a randomly distributed friendships
-        between those users.
+    def recurse_extended(self, ext_user_id, visited, path):
+        if not self.friendships[ext_user_id]:
+            return
+        for user_id in self.friendships[ext_user_id]:
+            # checking if exists, if it DOES check if new entry would be shorter
+            if user_id not in visited or len(visited[user_id]) > len(path) + 1:    
+                local_path = path.copy()
+                local_path.append(user_id)
+                visited[user_id] = local_path
+                self.recurse_extended(user_id, visited, path)
 
-        The number of users must be greater than the average number of friendships.
-        """
-        # Reset graph
-        self.last_id = 0
-        self.users = {}
-        self.friendships = {}
-        # !!!! IMPLEMENT ME
-
-        # Add users
-
-        # Create friendships
 
     def get_all_social_paths(self, user_id):
         """
@@ -57,8 +75,21 @@ class SocialGraph:
 
         The key is the friend's ID and the value is the path.
         """
+   
         visited = {}  # Note that this is a dictionary, not a set
-        # !!!! IMPLEMENT ME
+        visited[user_id] = [user_id]
+        # For each friend of a user:
+        for friend_id in self.friendships[user_id]:
+            visited[friend_id] = [user_id, friend_id]
+            # For extended_user of friend:
+            for extended_user in self.friendships[friend_id]:
+                # checking if exists, if it DOES check if new entry would be shorter
+                if extended_user not in visited or len(visited[extended_user]) > 3:
+                    path = [user_id, friend_id, extended_user]
+                    visited[extended_user] = path
+                    self.recurse_extended(extended_user, visited, path)
+
+
         return visited
 
 
